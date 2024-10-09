@@ -43,10 +43,46 @@ class YoutTubeDownloaderApp:
                                           relief='raised', bd=3)
 		self.download_button.pack(pady=20)
 
+	def download(self):
+		url = self.url_entry.get()
+		quality = self.quality_var.get()
+
+
+		if not url:
+			messagebox.showerror("Error", "Please enter a YouTube URL.")
+			return
+
+		try:
+			yt = YouTube(url)
+
+			if quality == "Highest":
+				stream = yt.streams.get_highest_resolution()
+			elif quality == "720p":
+				stream = yt.streams.filter(res="720p").first()
+			elif quality == "480p":
+				stream = yt.streams.filter(res="480p").first()
+			elif quality == "360p":
+				stream = yt.streams.filter(res="360p").first()
+			elif quality == "Audio":
+				stream = yt.streams.filter(only_audio=True).first()
 
 
 
+			if stream:
+				stream.download()
+				messagebox.showinfo("Success",f"Downloaded: {yt.title}")
+			else:
+				messagebox.showerror("Error","No streams available for the selected quality.")
 
+		except Exception as e:
+			messagebox.showerror("Error",str(e))				
+	
+
+    
+    
+
+
+      
 
 if __name__ == "__main__":
 	root = tk.Tk()
